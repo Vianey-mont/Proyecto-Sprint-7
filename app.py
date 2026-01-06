@@ -2,23 +2,39 @@ import pandas as pd
 import plotly.express as px
 import streamlit as st
 
-car_data = pd.read_csv('vehicles_us.csv')  # leer los datos
-hist_button = st.button('Construir histograma')  # crear un botón
+# Título de la aplicación
+st.header('Análisis de anuncios de venta de vehículos')
 
-if hist_button:  # al hacer clic en el botón
-    # escribir un mensaje
+# Leer los datos
+car_data = pd.read_csv('vehicles_us.csv')
+
+# --- SECCIÓN 1: HISTOGRAMA ---
+hist_button = st.button('Construir histograma')
+
+if hist_button:
     st.write(
         'Creación de un histograma para el conjunto de datos de anuncios de venta de coches')
-
-    # crear un histograma
     fig = px.histogram(car_data, x="odometer")
-
-    # mostrar un gráfico Plotly interactivo
     st.plotly_chart(fig, use_container_width=True)
 
-# crear una casilla de verificación
-build_histogram = st.checkbox('Construir un histograma')
+# --- SECCIÓN 2: GRÁFICO DE DISPERSIÓN ---
+# Añadimos un botón para el gráfico de dispersión
+scatter_button = st.button('Construir gráfico de dispersión')
 
-if build_histogram:  # si la casilla de verificación está seleccionada
-    st.write('Construir un histograma para la columna odómetro')
-    ...
+if scatter_button:
+    st.write('Gráfico de dispersión: Relación entre Odómetro y Precio')
+    # Creamos la gráfica comparando kilometraje (odometer) vs precio
+    fig_scatter = px.scatter(car_data, x="odometer", y="price")
+    st.plotly_chart(fig_scatter, use_container_width=True)
+
+# --- SECCIÓN 3: GRÁFICO DE BARRAS ---
+bar_button = st.button('Construir gráfico de barras')
+
+if bar_button:
+    st.write('Cantidad de vehículos por tipo')
+    # Contamos cuántos autos hay de cada tipo (SUV, sedan, etc.)
+    type_counts = car_data['type'].value_counts().reset_index()
+    type_counts.columns = ['tipo', 'cantidad']
+
+    fig_bar = px.bar(type_counts, x='tipo', y='cantidad')
+    st.plotly_chart(fig_bar, use_container_width=True)
